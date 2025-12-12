@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPT主题展示平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 添加EmailJS库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #2575fc;
+        }
+        
+        /* 主题区域 */
+        .topics-section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            color: #2c3e50;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+        }
+        
+        .card-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-body p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            min-height: 60px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* 标签样式 */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #2ecc71;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        /* 新增：简单的表单样式 */
+        .contact-form {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .message {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h1 id="main-title">PPT主题展示平台</h1>
+            <p class="subtitle">探索精彩主题，查看相关演示文稿</p>
+        </div>
+    </header>
+    
+    <!-- 导航栏 -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">
+                <h2><i class="fas fa-book-open"></i> 知识库</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#topics"><i class="fas fa-th-list"></i> 主题列表</a></li>
+                <li><a href="#guide"><i class="fas fa-question-circle"></i> 使用指南</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> 联系我们</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 主题展示区域 -->
+    <section class="topics-section" id="topics">
+        <div class="container">
+            <h2 class="section-title">主题展示</h2>
+            <div class="topics-grid" id="topics-container">
+                <!-- 主题卡片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- 使用指南区域 -->
+    <section class="topics-section" id="guide">
+        <div class="container">
+            <h2 class="section-title">使用指南</h2>
+            <div class="guide-content">
+                <div class="topic-card">
+                    <div class="card-header">
+                        <h3>如何查看PPT</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>点击主题卡片上的"查看PPT"按钮，即可直接在新窗口中打开PPT文件。</p>
+                        <p>如果PPT无法打开，请联系网站管理员。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 联系我们区域 - 修改为带表单的版本 -->
+    <section class="topics-section" id="contact">
+        <div class="container">
+            <h2 class="section-title">联系我们</h2>
+            <div class="topic-card">
+                <div class="card-header">
+                    <h3>获取帮助</h3>
+                </div>
+                <div class="card-body">
+                    <p>如果您在查看PPT时遇到问题，或有其他疑问，请填写以下表单：</p>
+                    
+                    <!-- 新增：客户资料收集表单 -->
+                    <div class="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="customerName" class="form-input" placeholder="您的姓名 *" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="customerEmail" class="form-input" placeholder="您的邮箱 *" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="customerPhone" class="form-input" placeholder="您的电话 *" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="customerMessage" class="form-input" placeholder="请详细描述您的需求或问题 *" required></textarea>
+                        </div>
+                        
+                        <!-- 消息提示区域 -->
+                        <div id="formMessage" class="message"></div>
+                        
+                        <button id="submitBtn" class="btn btn-success" onclick="submitCustomerInfo()" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> 发送消息
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <p><strong>其他联系方式：</strong></p>
+                        <p>邮箱：contact@example.com</p>
+                        <p>电话：+86 123-4567-8900</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="logo">
+                <h2><i class="fas fa-chalkboard-teacher"></i> PPT主题展示平台</h2>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#topics">主题列表</a></li>
+                <li><a href="#guide">使用指南</a></li>
+                <li><a href="#contact">联系我们</a></li>
+                <li><a href="#">隐私政策</a></li>
+            </ul>
+            <p class="copyright">© 2023 PPT主题展示平台. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== EmailJS 配置 ====================
+        // 使用您提供的配置信息
+        (function() {
+            // 初始化EmailJS，使用您的Public Key
+            emailjs.init("LdXA13X-luabZOMlg");
+        })();
+
+        // 您的EmailJS配置
+        const EMAILJS_CONFIG = {
+            SERVICE_ID: "service_tgjhf2j",          // 您的Service ID
+            CONTACT_TEMPLATE_ID: "template_contact_info"  // 客户信息模板
+        };
+
+        // ==================== 网站原有数据 ====================
+        let topics = JSON.parse(localStorage.getItem('pptTopics')) || [
+            { id: 1, title: "人工智能与机器学习", description: "探索AI的最新发展", pptUrl: null },
+            { id: 2, title: "Web开发技术", description: "前端与后端开发", pptUrl: null },
+            { id: 3, title: "数据科学与分析", description: "从数据中提取价值", pptUrl: null }
+        ];
+
+        // DOM元素
+        const topicsContainer = document.getElementById('topics-container');
+
+        // ==================== 页面原有功能 ====================
+        function initPage() {
+            renderTopics();
+        }
+
+        function renderTopics() {
+            topicsContainer.innerHTML = '';
+            
+            topics.forEach(topic => {
+                const topicCard = document.createElement('div');
+                topicCard.className = 'topic-card';
+                
+                const hasPPT = topic.pptUrl ? `<span class="badge">可查看PPT</span>` : '';
+                
+                topicCard.innerHTML = `
+                    <div class="card-header">
+                        <h3>${topic.title} ${hasPPT}</h3>
+                        <p>${topic.description}</p>
+                    </div>
+                    <div class="card-body">
+                        <p>${topic.description}。点击下方按钮查看相关PPT。</p>
+                        <button class="btn" onclick="viewPPT(${topic.id})" ${!topic.pptUrl ? 'disabled' : ''}>
+                            <i class="fas fa-external-link-alt"></i> 查看PPT
+                        </button>
+                    </div>
+                `;
+                topicsContainer.appendChild(topicCard);
+            });
+        }
+
+        function viewPPT(topicId) {
+            const topic = topics.find(t => t.id === topicId);
+            if (topic && topic.pptUrl) {
+                window.open(topic.pptUrl, '_blank');
+            } else {
+                alert('此主题暂无PPT文件，请稍后再试或联系管理员。');
+            }
+        }
+
+        // ==================== 新增：客户资料提交功能 ====================
+        async function submitCustomerInfo() {
+            // 获取表单数据
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerEmail = document.getElementById('customerEmail').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerMessage = document.getElementById('customerMessage').value.trim();
+            
+            // 验证必填字段
+            if (!customerName || !customerEmail || !customerPhone || !customerMessage) {
+                showMessage('请填写所有必填字段（带*号）', 'error');
+                return;
+            }
+            
+            // 验证邮箱格式
+            if (!isValidEmail(customerEmail)) {
+                showMessage('请输入有效的邮箱地址', 'error');
+                return;
+            }
+            
+            // 显示提交中状态
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+            
+            try {
+                // 准备邮件数据
+                const templateParams = {
+                    customer_name: customerName,
+                    customer_email: customerEmail,
+                    customer_phone: customerPhone,
+                    customer_message: customerMessage,
+                    submit_time: new Date().toLocaleString('zh-CN'),
+                    page_url: window.location.href
+                };
+                
+                // 发送邮件到您的邮箱
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.SERVICE_ID,
+                    EMAILJS_CONFIG.CONTACT_TEMPLATE_ID,
+                    templateParams
+                );
+                
+                if (response.status === 200) {
+                    // 发送成功
+                    showMessage('✅ 消息已发送成功！我们会尽快联系您。', 'success');
+                    
+                    // 清空表单
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('customerEmail').value = '';
+                    document.getElementById('customerPhone').value = '';
+                    document.getElementById('customerMessage').value = '';
+                    
+                    // 保存到本地存储（备份）
+                    saveCustomerInfo(templateParams);
+                }
+            } catch (error) {
+                console.error('邮件发送失败:', error);
+                showMessage('❌ 发送失败，请稍后重试或直接联系我们。', 'error');
+            } finally {
+                // 恢复按钮状态
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 发送消息';
+            }
+        }
+
+        // 保存客户信息到本地存储
+        function saveCustomerInfo(customerData) {
+            let customers = JSON.parse(localStorage.getItem('customerInfos')) || [];
+            customers.push({
+                ...customerData,
+                id: Date.now(),
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('customerInfos', JSON.stringify(customers));
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('formMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            // 5秒后自动隐藏（成功消息）
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // 验证邮箱格式
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
